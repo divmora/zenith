@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/divmora/zenith/actions/workflows/ci.yml/badge.svg)](https://github.com/divmora/zenith/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/site-divmora.github.io%2Fzenith-7c6cff)](https://divmora.github.io/zenith/)
 
 **Zenith is an autonomous coding agent.** Give it a task and a repository: it plans the change, waits for
 your approval if you ask it to, edits the code, runs the project's tests and linters, and hands back a branch
