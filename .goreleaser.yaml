@@ -1,0 +1,93 @@
+version: 2
+
+project_name: zenith
+
+before:
+  hooks:
+    - go mod tidy
+    - go mod verify
+
+builds:
+  - id: zenith
+    main: ./cmd/zenith
+    binary: zenith
+    flags:
+      - -trimpath
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/divmora/zenith/internal/version.Version={{ .Version }}
+    mod_timestamp: '{{ .CommitTimestamp }}'
+
+archives:
+  - id: default
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - README.md
+      - LICENSE
+      - CONTRIBUTING.md
+      - SECURITY.md
+
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '(?i)^docs:'
+      - '(?i)^test:'
+      - '(?i)^chore:'
+      - 'Merge pull request'
+      - 'Merge branch'
+  groups:
+    - title: '✨ Features'
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: '🐛 Bug Fixes'
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: '⚡ Performance Improvements'
+      regexp: "^.*perf[(\\w)]*:+.*$"
+      order: 2
+    - title: '🔒 Security Updates'
+      regexp: "^.*sec[(\\w)]*:+.*$"
+      order: 3
+    - title: '♻️ Refactoring'
+      regexp: "^.*refactor[(\\w)]*:+.*$"
+      order: 4
+    - title: '📚 Documentation'
+      regexp: "^.*docs[(\\w)]*:+.*$"
+      order: 5
+    - title: '🧪 Testing & QA'
+      regexp: "^.*test[(\\w)]*:+.*$"
+      order: 6
+    - title: '🔧 Tooling & CI'
+      regexp: "^.*chore[(\\w)]*:+.*$"
+      order: 7
+    - title: 'Other Changes'
+      order: 999
+
+release:
+  github:
+    owner: divmora
+    name: zenith
+  draft: false
+  prerelease: auto
+  mode: replace

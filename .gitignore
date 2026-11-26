@@ -1,0 +1,26 @@
+# Binaries
+bin/
+dist/
+*.exe
+/zenith
+
+# Test artifacts
+*.test
+*.out
+coverage.html
+
+# IDE & OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Local config, credentials and run output
+.env
+.env.*
+*.local
+*.pem
+/zenith.yaml
+/zenith.yml
+/.zenith-runs/
