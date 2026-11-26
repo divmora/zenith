@@ -1,0 +1,16 @@
+name: "Lint PR"
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+# pull_request_target runs with the base repository's token: read only.
+permissions:
+  pull-requests: read
+
+jobs:
+  validate:
+    uses: divmora/.github/.github/workflows/semantic-pr.yml@main
