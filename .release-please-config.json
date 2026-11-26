@@ -9,7 +9,8 @@
       "bump-patch-for-minor-pre-major": false,
       "extra-files": [
         "internal/version/version.go"
-      ]
+      ],
+      "initial-version": "0.1.0"
     }
   }
 }
