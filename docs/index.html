@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zenith — autonomous coding agent for any model</title>
+<meta name="description" content="Open-source autonomous coding agent: give it a task and a repository, and it plans, edits, runs your tests and hands back a branch and pull request. Works with OpenAI, Anthropic, Gemini, AWS Bedrock and Ollama.">
+<meta property="og:title" content="Zenith by Divmora">
+<meta property="og:description" content="Autonomous coding agent: task in, tested branch and pull request out. Any LLM provider. Apache 2.0.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://divmora.github.io/zenith/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%237c6cff'/><path d='M16 6v14M10 12l6-6 6 6M9 25h14' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 4v13M6 10l6-6 6 6M5 21h14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+  <symbol id="i-git" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v6a3 3 0 003 3h6M18 15V9"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 2l10 6-10 6L2 8l10-6z"/><path d="M2 16l10 6 10-6"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1117.4 0"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-gh" viewBox="0 0 24 24"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 00-1.3-3.2 4.2 4.2 0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 00-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 00-.1 3.2A4.6 4.6 0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-approve" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 16V8l-9-5-9 5v8l9 5 9-5z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21v-1a6 6 0 0112 0v1M16 4a4 4 0 010 8M22 21v-1a6 6 0 00-4-5.6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="logo"><svg class="i"><use href="#i-up"/></svg></span>Zenith</a>
+    <nav>
+      <a href="#features" class="hide-sm">Features</a>
+      <a href="#how" class="hide-sm">How it works</a>
+      <a href="#personas" class="hide-sm">Personas</a>
+      <a href="#quickstart">Quick start</a>
+      <a href="#security" class="hide-sm">Security</a>
+      <a href="#cli">CLI</a>
+      <a href="https://github.com/divmora/zenith">GitHub</a>
+    </nav>
+    <button class="theme" id="theme" title="Toggle light/dark" aria-label="Toggle light or dark theme"><svg class="i"><use href="#i-sun"/></svg></button>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="pill">Open source · <b>Apache 2.0</b> · early development</span>
+      <h1>Give it a task. Get back a <span class="grad">tested branch</span>.</h1>
+      <p class="lead">Zenith is an autonomous coding agent. It plans the change, waits for your approval if you want it to, edits the code, runs your project's own tests, fixes what they catch, and hands back a branch and a pull request. It works with OpenAI, Anthropic, Gemini, AWS Bedrock, Ollama or your own gateway.</p>
+      <div class="cta">
+        <a class="btn primary" href="#quickstart">Get started <svg class="i"><use href="#i-arrow"/></svg></a>
+        <a class="btn" href="https://github.com/divmora/zenith"><svg class="i"><use href="#i-gh"/></svg> View on GitHub</a>
+        <a class="btn" href="https://github.com/divmora/zenith/releases">Releases</a>
+      </div>
+      <div class="install"><span class="dollar">$</span><code id="install-cmd">go install github.com/divmora/zenith/cmd/zenith@latest</code><button class="copy" data-copy="install-cmd">Copy</button></div>
+    </div>
+
+    <div class="mock" aria-label="Example zenith run">
+      <div class="bar"><i></i><i></i><i></i><span>zenith run --worktree</span></div>
+<div class="term"><span class="p">$</span> <span class="hi">zenith run --worktree --task "Add WordCount + tests"</span>
+  worktree  ~/.cache/zenith/worktrees/demo-add-wordcount
+  branch    zenith/add-wordcount-tests-b37a02
+<span class="ok">✓</span> check (baseline) make test: exit 0
+<span class="ok">✓</span> read_file strutil/strutil.go
+<span class="ok">✓</span> edit_file strutil/strutil.go
+<span class="ok">✓</span> write_file strutil/wordcount_test.go
+<span class="ok">✓</span> run_command go test ./...
+<span class="ok">✓</span> finish
+<span class="bad">✗</span> check (final) make test: exit 2
+<span class="dim">  gofmt needed on: strutil/wordcount_test.go</span>
+<span class="ok">✓</span> run_command gofmt -w strutil
+<span class="ok">✓</span> check (final, after fix 1) make test: exit 0
+
+committed 4f1c9e2 on zenith/add-wordcount-tests-b37a02
+<span class="hi">done</span> after 13 step(s)
+
+<span class="p">$</span> <span class="hi">zenith publish --result result.json</span>
+zenith: opened #42: https://github.com/org/repo/pull/42</div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">What you get</div>
+    <h2>An agent you can hand real work to</h2>
+    <p class="sub">The model proposes and edits. Zenith decides what counts as done: it runs the checks itself and never takes the model's word that tests pass.</p>
+    <div class="grid g3">
+      <div class="card"><div class="ic"><svg class="i"><use href="#i-approve"/></svg></div><h3>Plan first, if you want</h3><p>A read-only planning phase proposes the change and stops. Approve it, add a note, or send feedback for a new plan. Planning resumes from a checkpoint, even in a fresh sandbox.</p></div>
+      <div class="card"><div class="ic"><svg class="i"><use href="#i-repeat"/></svg></div><h3>Verified by your own checks</h3><p>Zenith finds your project's checks (<code>make test</code>, Go, npm/pnpm/yarn/bun, cargo, pytest, composer) and runs them before and after. New failures go back to the agent to fix.</p></div>
+      <div class="card"><div class="ic"><svg class="i"><use href="#i-git"/></svg></div><h3>Your checkout stays yours</h3><p>With <code>--worktree</code>, the work happens in a separate git worktree. Your branch and uncommitted changes are never touched. Every run ends in a commit on its own <code>zenith/</code> branch.</p></div>
+      <div class="card"><div class="ic"><svg class="i"><use href="#i-users"/></svg></div><h3>Built-in personas</h3><p>Specialists for security, performance, UX, maintainability, tests and docs. Each picks one focused improvement and keeps a journal in the repository, so the next run builds on the last.</p></div>
+      <div class="card"><div class="ic"><svg class="i"><use href="#i-file"/></svg></div><h3>Pull requests on GitHub and GitLab</h3><p><code>zenith publish</code> pushes the verified commit and opens a pull request or merge request, with the summary, files, checks before and after, and every command the agent ran.</p></div>
+      <div class="card"><div class="ic"><svg class="i"><use href="#i-shield"/></svg></div><h3>Safe with untrusted code</h3><p>The agent's commands never see your API keys or git tokens. Files stay inside the workspace, <code>.git</code> is off limits, and planted git hooks or config are undone after every run.</p></div>
+      <div class="card"><div class="ic"><svg class="i"><use href="#i-gauge"/></svg></div><h3>Budgets and long tasks</h3><p>Limits on steps, tokens and time, with clear exit codes. Long runs are compacted to fit the model's context, keeping the task, the approved plan and the latest work.</p></div>
+      <div class="card"><div class="ic"><svg class="i"><use href="#i-layers"/></svg></div><h3>Machine-readable from end to end</h3><p>A JSON event stream, a result file and a checkpoint file with a versioned schema, so a CI job or a control plane can run Zenith and act on what it did.</p></div>
+      <div class="card"><div class="ic"><svg class="i"><use href="#i-box"/></svg></div><h3>Ready-made container</h3><p><code>ghcr.io/divmora/zenith</code> ships Go, Node.js (npm, pnpm, Yarn), Python with pytest, make and gcc, and runs as any user, with or without network.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2>One task, one process, one branch</h2>
+    <p class="sub">Each run does one task in one repository. Pushing is a separate step that no model takes part in.</p>
+    <ol class="flow">
+      <li><h3>Start clean</h3><p>Zenith records the base commit, snapshots the repository's git config and hooks, and creates the branch (in a worktree, if you ask).</p></li>
+      <li><h3>Baseline</h3><p>It runs the project's checks once before any change, so failures that were already there aren't blamed on the agent.</p></li>
+      <li><h3>Plan (optional)</h3><p>With <code>--approve-plan</code>, the agent explores with read-only tools, proposes a plan and stops with exit code 10.</p></li>
+      <li><h3>Work</h3><p>The agent reads, edits and runs commands in the workspace, with a scrubbed environment and output and time limits.</p></li>
+      <li><h3>Verify</h3><p>When the agent says it's done, Zenith runs the checks itself. New failures go back to the agent, for up to three rounds.</p></li>
+      <li><h3>Commit</h3><p>Zenith commits the result on the branch, restores the git config, and writes the result file.</p></li>
+      <li><h3>Publish</h3><p><code>zenith publish</code>, run outside the sandbox with your code-host token, pushes the commit and opens the pull request.</p></li>
+      <li><h3>Review</h3><p>You review it like any contribution. The description says an agent wrote it and shows exactly what was run.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="personas" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">Personas</div>
+    <h2>Specialists that need no task text</h2>
+    <p class="sub">Run <code>zenith run --persona NAME</code> and the specialist picks one worthwhile improvement on its own, or pass <code>--task</code> to aim it. Write your own as a Markdown file and use <code>--persona-file</code>.</p>
+    <div class="grid g3">
+      <div class="card persona"><span class="em">🛡️</span><div><h3><code>sentinel</code><span class="lvl">Security</span></h3><p>Finds and fixes one real security weakness, most severe first, and lists what it found but did not fix.</p></div></div>
+      <div class="card persona"><span class="em">⚡</span><div><h3><code>bolt</code><span class="lvl">Performance</span></h3><p>Makes one measurable performance improvement without changing behaviour.</p></div></div>
+      <div class="card persona"><span class="em">🎨</span><div><h3><code>palette</code><span class="lvl">UX and accessibility</span></h3><p>Makes one small, visible UX or accessibility improvement in the interface.</p></div></div>
+      <div class="card persona"><span class="em">🧹</span><div><h3><code>sweeper</code><span class="lvl">Maintainability</span></h3><p>Cleans up one piece of technical debt without changing behaviour.</p></div></div>
+      <div class="card persona"><span class="em">🔬</span><div><h3><code>probe</code><span class="lvl">Tests</span></h3><p>Adds meaningful tests for important code that has none, and fixes any bug they expose.</p></div></div>
+      <div class="card persona"><span class="em">📝</span><div><h3><code>scribe</code><span class="lvl">Documentation</span></h3><p>Fixes one gap or inaccuracy in the documentation, checked against the code.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="models">
+  <div class="wrap">
+    <div class="eyebrow">Bring your own model</div>
+    <h2>Switch providers with one flag</h2>
+    <p class="sub">Pick a model with <code>--model</code> or <code>ZENITH_MODEL</code> as <code>provider:model</code>, comma-separated for fallbacks. Tool calling and streaming work the same way on every provider, and prompt caching is used where the provider has it.</p>
+    <div class="providers">
+      <span class="prov">OpenAI</span><span class="prov">Anthropic</span><span class="prov">Google Gemini</span><span class="prov">AWS Bedrock <small>Converse, any tool-capable model</small></span><span class="prov">Azure OpenAI</span><span class="prov">Ollama</span><span class="prov">OpenRouter</span><span class="prov">Groq</span><span class="prov">DeepSeek</span><span class="prov">Mistral</span><span class="prov">xAI</span><span class="prov">Together</span><span class="prov">OpenAI-compatible <small>vLLM, LiteLLM, gateways</small></span>
+    </div>
+    <div class="grid g1">
+      <div class="codeblock"><div class="ttl">From the environment <button class="copy" data-copy="env-models">Copy</button></div><pre id="env-models"><span class="c"># the provider's usual key variable is read</span>
+export ZENITH_MODEL=anthropic:claude-sonnet-5-5   ANTHROPIC_API_KEY=...
+export ZENITH_MODEL=openai:<span class="s">&lt;model&gt;</span>               OPENAI_API_KEY=...
+export ZENITH_MODEL=gemini:<span class="s">&lt;model&gt;</span>               GEMINI_API_KEY=...
+export ZENITH_MODEL=bedrock:<span class="s">&lt;model-id&gt;</span>           AWS_REGION=us-east-1
+export ZENITH_MODEL=ollama:<span class="s">&lt;model&gt;</span>               <span class="c"># local, no key</span>
+export ZENITH_MODEL=<span class="s">"anthropic:&lt;model&gt;,bedrock:&lt;model-id&gt;"</span>   <span class="c"># fallback chain</span></pre></div>
+    </div>
+  </div>
+</section>
+
+<section id="quickstart" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">Quick start</div>
+    <h2>Your first task in a minute</h2>
+    <p class="sub">Run it in a container or VM: the agent edits files and runs commands chosen by a model. Nothing is pushed until you run <code>zenith publish</code>.</p>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" aria-controls="tab-run" id="t-run">Run a task</button>
+      <button role="tab" aria-selected="false" aria-controls="tab-plan" id="t-plan">Plan first</button>
+      <button role="tab" aria-selected="false" aria-controls="tab-pub" id="t-pub">Open the PR</button>
+      <button role="tab" aria-selected="false" aria-controls="tab-docker" id="t-docker">Docker</button>
+    </div>
+    <div class="tabpanel" id="tab-run" role="tabpanel" aria-labelledby="t-run"><div class="codeblock"><div class="ttl">Terminal <button class="copy" data-copy="qs-run">Copy</button></div><pre id="qs-run"><span class="c"># install (or download a binary from Releases, or use the image)</span>
+go install github.com/divmora/zenith/cmd/zenith@latest
+export ZENITH_MODEL=anthropic:claude-sonnet-5-5 ANTHROPIC_API_KEY=...
+
+zenith run --worktree --workspace ./repo --result /tmp/result.json \
+  --task <span class="s">"Fix the off-by-one in pagination and add a test"</span>
+
+zenith personas                                   <span class="c"># sentinel, bolt, palette, sweeper, probe, scribe</span>
+zenith run --persona sentinel --worktree --workspace ./repo</pre></div></div>
+    <div class="tabpanel" id="tab-plan" role="tabpanel" aria-labelledby="t-plan" hidden><div class="codeblock"><div class="ttl">Approve a plan before any file changes <button class="copy" data-copy="qs-plan">Copy</button></div><pre id="qs-plan"><span class="c"># read-only planning; exits 10 with a checkpoint</span>
+zenith run --workspace ./repo --approve-plan --checkpoint /tmp/plan.json --task <span class="s">"..."</span>
+
+<span class="c"># ask for changes: a revised plan, exit 10 again</span>
+zenith resume --checkpoint /tmp/plan.json --feedback <span class="s">"Keep the public API unchanged"</span>
+
+<span class="c"># approve, optionally with a note: implement, verify, commit</span>
+zenith resume --checkpoint /tmp/plan.json --approve --note <span class="s">"Name the helper clampPage"</span></pre></div></div>
+    <div class="tabpanel" id="tab-pub" role="tabpanel" aria-labelledby="t-pub" hidden><div class="codeblock"><div class="ttl">Push and open a pull request (outside the sandbox) <button class="copy" data-copy="qs-pub">Copy</button></div><pre id="qs-pub"><span class="c"># GitHub: contents + pull-requests write. GitLab: GITLAB_TOKEN with api scope.</span>
+GITHUB_TOKEN=... zenith publish --result /tmp/result.json
+GITHUB_TOKEN=... zenith publish --result /tmp/result.json --draft --base develop
+
+<span class="c"># GitHub Enterprise or self-managed GitLab</span>
+GITLAB_TOKEN=... zenith publish --result /tmp/result.json \
+  --remote https://git.example.com/group/proj.git --platform gitlab</pre></div></div>
+    <div class="tabpanel" id="tab-docker" role="tabpanel" aria-labelledby="t-docker" hidden><div class="codeblock"><div class="ttl">ghcr.io/divmora/zenith <button class="copy" data-copy="qs-docker">Copy</button></div><pre id="qs-docker"><span class="c"># the entrypoint is zenith; mount the repository at /workspace</span>
+docker run --rm --user <span class="s">"$(id -u):$(id -g)"</span> -v <span class="s">"$PWD:/workspace"</span> \
+  -e ZENITH_MODEL -e ANTHROPIC_API_KEY \
+  ghcr.io/divmora/zenith:0.1.0<!-- x-release-please-version --> run --task <span class="s">"..."</span>
+
+<span class="c"># other stacks: build FROM ghcr.io/divmora/zenith and add your toolchain</span></pre></div></div>
+  </div>
+</section>
+
+<section id="security">
+  <div class="wrap">
+    <div class="eyebrow">Security model</div>
+    <h2>Repository content is untrusted</h2>
+    <p class="sub">Code, comments, READMEs and issue text can all carry prompt injection. Zenith is built so that a steered agent can't do much harm outside the branch it's working on.</p>
+    <div class="grid g2">
+      <div class="card"><ul class="check">
+        <li><svg class="i"><use href="#i-check"/></svg><span><b>No secrets in the agent's commands:</b> an environment allowlist drops API keys, cloud credentials, git tokens and SSH agents. Add a variable on purpose with <code>--pass-env</code>.</span></li>
+        <li><svg class="i"><use href="#i-check"/></svg><span><b>No push during a run:</b> the code-host token is used only by <code>zenith publish</code>, which runs without a model.</span></li>
+        <li><svg class="i"><use href="#i-check"/></svg><span><b>Confined files:</b> file tools resolve symlinks, stay inside the workspace and can't write to <code>.git</code>.</span></li>
+      </ul></div>
+      <div class="card"><ul class="check">
+        <li><svg class="i"><use href="#i-check"/></svg><span><b>Git can't be turned against you:</b> Zenith's own git calls disable hooks, fsmonitor, filters and pagers, and the repository's git config and hooks are restored after every run.</span></li>
+        <li><svg class="i"><use href="#i-check"/></svg><span><b>Safe pull request text:</b> @mentions and GitLab quick actions in the model-written description are neutralised.</span></li>
+        <li><svg class="i"><use href="#i-check"/></svg><span><b>Your sandbox does the rest:</b> run Zenith in a disposable container with network limited to your model provider and package registries. See <a href="https://github.com/divmora/zenith/blob/main/SECURITY.md">SECURITY.md</a> for the known limits.</span></li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="cli" class="alt">
+  <div class="wrap">
+    <div class="eyebrow">CLI reference</div>
+    <h2>Four commands</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>run</code></td><td>Do one task and commit it on a new branch. Task: <code>--task</code>, <code>--task-file</code>, <code>--persona</code>, <code>--persona-file</code>. Where: <code>--workspace</code>, <code>--worktree</code>, <code>--branch</code>. Plan: <code>--approve-plan</code>, <code>--checkpoint</code>. Limits: <code>--max-steps</code>, <code>--max-tokens</code>, <code>--timeout</code>, <code>--context-tokens</code>. Checks: <code>--verify</code>, <code>--no-verify</code>, <code>--max-fix-attempts</code>. Output: <code>--result</code>, <code>--events</code>, <code>--quiet</code>.</td></tr>
+        <tr><td><code>resume</code></td><td>Continue from a plan checkpoint: <code>--approve</code> (with an optional <code>--note</code>) or <code>--feedback</code>.</td></tr>
+        <tr><td><code>publish</code></td><td>Push the run's verified commit and open a pull request or merge request: <code>--result</code>, <code>--remote</code>, <code>--base</code>, <code>--title</code>, <code>--draft</code>, <code>--allow-incomplete</code>, <code>--platform</code>, <code>--api-url</code>.</td></tr>
+        <tr><td><code>personas [NAME]</code></td><td>List the built-in personas, or print one.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="sub" style="margin-top:18px">Exit codes: <code>0</code> done, <code>10</code> awaiting plan approval, <code>20</code> budget exceeded, <code>30</code> failed, <code>1</code> internal error, <code>2</code> usage. The event stream, result and checkpoint are versioned JSON for other tools.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="console">
+      <div>
+        <h2 style="margin:0">Running it for a team?</h2>
+        <p>Zenith Console is planned: task intake from issues and chat, a queue, sandboxed runs, plan approval in the browser and history, running this CLI in Docker or Kubernetes. Until then, Zenith runs from any CI job or script.</p>
+      </div>
+      <a class="btn primary" href="https://github.com/divmora/zenith/blob/main/docs/DESIGN.md">Read the design <svg class="i"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Zenith by <a href="https://divmora.com">DIVMORA Technologies</a> · Apache License 2.0</span>
+    <span><a href="https://github.com/divmora/zenith">GitHub</a> · <a href="https://github.com/divmora/zenith/releases">Releases</a> · <a href="https://github.com/divmora/zenith/blob/main/SECURITY.md">Security</a> · <a href="https://github.com/divmora/zenith/blob/main/CONTRIBUTING.md">Contributing</a></span>
+  </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>
